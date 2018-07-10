@@ -1,114 +1,90 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
-import MovieDetail from './MovieDetail';
-
+import Header from './Shared/Header';
+import MyQuotes from './Shared/MyQuotes';
+import ApiKeys from '../Config/ApiKeys';
 
 class Dashboard extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             movies: [],
-            searchFilter: ''
+            searchFilter: '',
+            initialMovies: []
         };
 
-        const checkLoginStatus = localStorage.getItem("loginStatus");
-        if(checkLoginStatus != "success"){
-            this.props.history.push('/');
-        }
-
-        this.updateMovies =  debounce(function(searchValue) {
-
-                axios.get('https://api.themoviedb.org/3/search/movie?api_key=0ca81b60e0ccb82d9e38665f13b044f5&query='+searchValue)
-                .then((response) => {
-                    this.setState({ movies: response.data.results || [] })
+        this.updateMovies = debounce(function (searchValue) {
+            if (searchValue == '') {
+                this.setState({
+                    movies: this.state.initialMovies
                 })
-                .catch((error) => {
-                    console.log(error);
-                });
-            },100);
-        }
-
-    componentWillMount() {
+            }
+            axios.get(`https://api.themoviedb.org/3/search/movie?api_key=0ca81b60e0ccb82d9e38665f13b044` + `f5&query=` + searchValue)
+                .then((response) => {
+                    this.setState({
+                        movies: response.data.results
+                    })
+                })
+                .catch((error) => {});
+        }, 400);
     }
 
     componentDidMount() {
-        axios.get('https://api.themoviedb.org/3/movie/popular?api_key=0ca81b60e0ccb82d9e38665f13b044f5')
+        axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${ApiKeys.movieDbApiKey}` + '4f5')
             .then((response) => {
-                this.setState({ movies: response.data.results || [] })
-                console.log(this.state);
+                this.setState({ movies: response.data.results, initialMovies: response.data.results })
             })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    
-    filterMovies = (event) => {
-        this.setState({
-            searchFilter: event.target.value
-        });
-        this.updateMovies(event.target.value);        
+            .catch((error) => { });
     }
 
-    getMovieDetail = (event) => {
-       let getMovieId = event.target.value;
-       this.props.history.push(
-           {
-                pathname: '/moviedetail',
-                search: '?movieId='+getMovieId,
-                movieId : getMovieId
-            }
-        )
+    filterMovies = (event) => {
+        this.setState({ searchFilter: event.target.value });
+        this.updateMovies(event.target.value);
     }
 
     render() {
+        const { movies } = this.state;
         return (
-            
-
             <div className="container">
-                <center><h2>Movie DB Application Dashboard<small>&nbsp;&nbsp;Welcome : {localStorage.getItem('username')}</small></h2></center><br />
-                <div>
-                    <label>Search Movies : </label>
-                    <input type="text" class="form-control moviesFilter" onChange={this.filterMovies} value={this.state.searchFilter} />
+                <Header />
+                <br />
+                <div className="row">
+                    <div className="col-sm">
+                        <MyQuotes />
+                    </div>
                 </div>
-                <table class="table table-bordered tableStyle">
-                    <thead>
-                    <tr>
-                        <th>Movie Id</th>
-                        <th>Movie Name</th>
-                        <th>overview</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.state.movies.map((eachMovie) =>
-                                <tr>
-                                    <td><strong>{eachMovie.id}</strong></td>
-                                    <td>{eachMovie.original_title}</td>
-                                    <td>{eachMovie.overview}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-primary btn-xs buttonStyle" value={eachMovie.id} onClick={this.getMovieDetail}>Show Detail</button>
-                                            <button type="button" class="btn btn-primary btn-xs">Remove</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )
-                        }
-                    </tbody>
-                </table>
+                <br />
+                <form>
+                    <div className="form-row">
+                        <div className="col-12">
+                            <input type="text" class="form-control" placeholder="Search Movies" onChange={this.filterMovies} />
+                        </div>
+                    </div>
+                </form>
+                <div className="row">
+                    {
+                        typeof movies !== 'undefined' && movies.length > 0 ?
+
+                            this
+                                .state
+                                .movies
+                                .map((eachMovie) => <div class="card" style={{ width: "18rem" }}>
+                                    <img class="card-img-top" src={`https://image.tmdb.org/t/p/w500${eachMovie.poster_path}`} alt="Card image cap" />
+                                    <div class="card-body">
+                                        <h5 class="card-title"><center>{eachMovie.original_title}</center></h5>
+                                    </div>
+                                </div>)
+                            :
+                            <div class="alert alert-light" role="alert"><center>No Matching movie found.</center></div>
+                    }
+                </div>
             </div>
         );
     }
 }
-
-// Specifies the default values for props:
-
 Dashboard.defaultProps = {
-    movies: []
+    movies: [],
+    initialMovies: []
 };
-
 export default Dashboard;

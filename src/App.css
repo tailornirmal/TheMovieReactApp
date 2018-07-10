@@ -1,33 +1,11 @@
-.LoginForm {
-    width: 800px;
-    background-color: #EFEFEF;
-    padding: 40px;
-    margin-top: 25px;
-    margin-left:600px;
-    border-radius: 15px;
+.cardImageStyle {
+    height: 500px !important;
+    width: 300px !important;
 }
-.imageStyle {
-    border-radius: 15px;
+.card {
+    margin: 15px !important;
+    height: auto !important;
 }
-header {
-  padding: 154px 0 100px;
-}
-
-@media (min-width: 992px) {
-  header {
-    padding: 156px 0 100px;
-  }
-}
-section {
-  padding: 150px 0;
-}
-.moviesFilter{
-  margin-bottom:10px;
-  width: 400px;
-}
-.tableStyle{
-  font-size: 12px;
-}
-.buttonStyle{
-  margin: 10px;
+.card-body {
+    height: 100% !important;
 }

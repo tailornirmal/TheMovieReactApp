@@ -6,6 +6,13 @@ class MovieDetail extends Component {
   
   constructor(props){
       super(props);
+      
+      const getStorage = localStorage.getItem('movieid');
+      if(getStorage =='undefined'){
+        localStorage.setItem('movieid',this.props.location.movieId)
+      }
+
+      localStorage.setItem('movieid',this.props.location.movieId);
       this.state = {
           movieDetail : [],
           movieId : this.props.location.movieId
@@ -14,7 +21,7 @@ class MovieDetail extends Component {
 
   componentDidMount() {
 
-        const getMovieId  = this.state.movieId;
+        const getMovieId  = localStorage.getItem('movieid');
         axios.get('http://api.themoviedb.org/3/movie/'+getMovieId+'?api_key=0ca81b60e0ccb82d9e38665f13b044f5')
             .then((response) => {
                 this.setState({ movieDetail: response.data });
@@ -30,6 +37,9 @@ class MovieDetail extends Component {
         <section id="about">
           <div class="container">
             <div class="row">
+              <div class = "page-header">
+                <h1>Movie Detail</h1>
+              </div>
               <div class="col-lg-8 mx-auto">
                 <div class="list-group">
                     <a href="#" class="list-group-item active">
