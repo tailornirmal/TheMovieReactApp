@@ -5,8 +5,9 @@ This application shows list of popular hollywood movies and move searching facil
 
 Steps to run at your machine :
 
-Clone repository.
-Navigate to repository after cloning.
-Run command - yarn install
-Run command - yarn start.
-You are good to go.
+  1. Clone repository.
+  2. Navigate to repository after cloning.
+  3. Run command - yarn install
+  4. Run command - yarn start.
+
+  You are good to go. 
